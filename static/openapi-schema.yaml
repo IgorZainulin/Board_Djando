@@ -1,0 +1,168 @@
+swagger: '2.0'
+info:
+  title: Rest API для Новостного портала
+  description: Методы создания, получения, редактирования и удаления постов
+  license:
+    name: dina
+  version: v1
+host: 127.0.0.1:8000
+schemes:
+- http
+basePath: /api
+consumes:
+- application/json
+produces:
+- application/json
+securityDefinitions:
+  Basic:
+    type: basic
+security:
+- Basic: []
+paths:
+  /news/:
+    get:
+      operationId: news
+      description: 'Все новости!'
+      responses:
+        '200':
+          description: 'Успешное получение списка постов'
+          schema:
+            required:
+            - count
+            - results
+            type: object
+            properties:
+              count:
+                type: integer
+              next:
+                type: string
+                format: uri
+                x-nullable: true
+              previous:
+                type: string
+                format: uri
+                x-nullable: true
+              results:
+                type: array
+                items:
+                  $ref: '#/definitions/News'
+      tags:
+      - news
+    post:
+      operationId: news_create
+      description: 'Добавление поста'
+      parameters:
+      - name: data
+        in: body
+        required: true
+        schema:
+          $ref: '#/definitions/News'
+      responses:
+        '201':
+          description: 'Успешное создание поста'
+          schema:
+            $ref: '#/definitions/News'
+      tags:
+      - news
+    parameters: []
+  /news/{id}/:
+    get:
+      operationId: news_read
+      description: 'Получение поста по id'
+      parameters: []
+      responses:
+        '200':
+          description: 'Успешное получение поста по id'
+          schema:
+            $ref: '#/definitions/News'
+      tags:
+      - news
+    put:
+      operationId: news_update
+      description: 'Изменение поста'
+      parameters:
+      - name: data
+        in: body
+        required: true
+        schema:
+          $ref: '#/definitions/News'
+      responses:
+        '200':
+          description: 'Успешное изменение поста'
+          schema:
+            $ref: '#/definitions/News'
+      tags:
+      - news
+    patch:
+      operationId: news_partial_update
+      description: 'Частичное изменение поста'
+      parameters:
+      - name: data
+        in: body
+        required: true
+        schema:
+          $ref: '#/definitions/News'
+      responses:
+        '200':
+          description: 'Успешное частичное изменение поста'
+          schema:
+            $ref: '#/definitions/News'
+      tags:
+      - news
+    delete:
+      operationId: news_delete
+      description: 'Удаление поста'
+      parameters: []
+      responses:
+        '204':
+          description: 'Успешное удаление поста'
+      tags:
+      - news
+    parameters:
+    - name: id
+      in: path
+      description: Идентификатор поста
+      required: true
+      type: integer
+definitions:
+  News:
+    required:
+    - post_author
+    - post_header
+    - post_text
+    type: object
+    properties:
+      id:
+        title: ID
+        type: integer
+        readOnly: true
+      post_type:
+        title: Post type
+        type: string
+        enum:
+        - NW
+        - AR
+      post_category:
+        type: array
+        items:
+          type: integer
+        readOnly: true
+        uniqueItems: true
+      post_author:
+        title: Post author
+        type: integer
+      post_create_date:
+        title: Post create date
+        type: string
+        format: date-time
+        readOnly: true
+      post_header:
+        title: Post header
+        type: string
+        maxLength: 128
+        minLength: 1
+      post_text:
+        title: Post text
+        type: string
+        minLength: 1
+
